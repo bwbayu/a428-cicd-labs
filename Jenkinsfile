@@ -1,19 +1,27 @@
 pipeline {
     agent {
         docker {
-            image 'node:16-buster-slim'
-            args '-p 3000:3000'
+            image 'node:16-buster-slim' 
+            args '-p 3000:3000' 
         }
     }
     stages {
+        stage('Clone Repository') {
+            steps {
+                checkout([$class: 'GitSCM',
+                          branches: [[name: '*/react-app']],
+                          userRemoteConfigs: [[url: 'https://github.com/bwbayu/a428-cicd-labs.git']]
+                ])
+            }
+        }
         stage('Build') {
             steps {
                 sh 'npm install'
             }
         }
-        stage('Test') { 
+        stage('Test') {
             steps {
-                sh './jenkins/scripts/test.sh' 
+                sh './jenkins/scripts/test.sh'
             }
         }
     }
